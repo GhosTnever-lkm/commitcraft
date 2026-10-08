@@ -1,5 +1,11 @@
 # Changelog
 
+## v1.0.2
+
+- Restore the complete standard MIT license, including its limitation-of-liability clause.
+- Update the installation example to v1.0.2.
+
+
 ## v1.0.1
 
 - Default to commits after the latest reachable tag instead of labeling the entire history as unreleased.

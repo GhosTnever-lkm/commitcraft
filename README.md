@@ -5,7 +5,7 @@ CommitCraft turns Git history into a clean Markdown changelog, grouped by Conven
 ## Install
 
 ```bash
-python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.1"
+python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.2"
 ```
 
 ## Use
