@@ -5,21 +5,27 @@ CommitCraft turns Git history into a clean Markdown changelog, grouped by Conven
 ## Install
 
 ```bash
-python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.0"
+python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.1"
 ```
 
 ## Use
 
-Generate notes from the latest history:
+Generate unreleased notes since the most recent Git tag:
 
 ```bash
 commitcraft
 ```
 
-Compare a release tag with the current checkout and save the result:
+Compare a specific release tag with the current checkout and save the result:
 
 ```bash
 commitcraft --from v1.2.0 --to HEAD --output RELEASE_NOTES.md --title "What's new"
+```
+
+Use `--all-history` when you intentionally want every commit reachable from the target:
+
+```bash
+commitcraft --all-history
 ```
 
 Run against another repository:

@@ -21,6 +21,7 @@ def parser() -> argparse.ArgumentParser:
     result.add_argument("--output", help="Write Markdown to this path instead of stdout.")
     result.add_argument("--title", help="Custom Markdown title.")
     result.add_argument("--conventional-only", action="store_true", help="Skip commits that do not follow Conventional Commits.")
+    result.add_argument("--all-history", action="store_true", help="Include all commits reachable from --to, ignoring the latest tag.")
     return result
 
 
@@ -33,6 +34,7 @@ def main(argv: list[str] | None = None) -> int:
             to_ref=args.to,
             include_unknown=not args.conventional_only,
             title=args.title,
+            all_history=args.all_history,
         )
         if args.output:
             output = Path(args.output)

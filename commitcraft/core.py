@@ -63,6 +63,15 @@ def git_commits(repo: str, revision: str) -> list[Commit]:
     return commits
 
 
+def latest_tag(repo: str, to_ref: str) -> str | None:
+    """Return the newest reachable tag, or None when this repository has no tags."""
+    result = subprocess.run(
+        ["git", "-C", repo, "describe", "--tags", "--abbrev=0", to_ref],
+        check=False, capture_output=True, text=True, encoding="utf-8", errors="replace",
+    )
+    return result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
+
+
 def classify(commit: Commit, include_unknown: bool = True) -> Entry | None:
     match = CONVENTIONAL.match(commit.subject)
     if not match:
@@ -92,13 +101,14 @@ def render(entries: Iterable[Entry], title: str = "Changelog") -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def generate(repo: str, from_ref: str | None = None, to_ref: str = "HEAD", include_unknown: bool = True, title: str | None = None) -> str:
-    if from_ref:
-        revision = f"{from_ref}..{to_ref}"
-        heading = title or f"Changes since {from_ref}"
+def generate(repo: str, from_ref: str | None = None, to_ref: str = "HEAD", include_unknown: bool = True, title: str | None = None, all_history: bool = False) -> str:
+    start = from_ref or (None if all_history else latest_tag(repo, to_ref))
+    if start:
+        revision = f"{start}..{to_ref}"
+        heading = title or (f"Unreleased (since {start})" if from_ref is None else f"Changes since {start}")
     else:
         revision = to_ref
-        heading = title or "Unreleased"
+        heading = title or ("Unreleased" if not all_history else "Complete history")
     commits = git_commits(repo, revision)
     entries = [entry for commit in commits if (entry := classify(commit, include_unknown)) is not None]
     return render(entries, heading)
