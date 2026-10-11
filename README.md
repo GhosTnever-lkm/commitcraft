@@ -5,7 +5,7 @@ CommitCraft turns Git history into a clean Markdown changelog, grouped by Conven
 ## Install
 
 ```bash
-python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.2"
+python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.3"
 ```
 
 ## Use
@@ -43,6 +43,15 @@ Use `--conventional-only` to leave out messages that do not match Conventional C
 ## Privacy and limits
 
 CommitCraft reads local Git history using the installed Git executable. It does not access the network, change repository files unless `--output` is supplied, or infer whether a change is user-facing. Review the generated notes before publishing them.
+
+## Development
+
+```bash
+python -m pip install -e .[dev]
+pytest                 # 23 tests, 99% coverage
+ruff check . && ruff format --check .
+mypy commitcraft       # strict mode
+```
 
 ## License
 
