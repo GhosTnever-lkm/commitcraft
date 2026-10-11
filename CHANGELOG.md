@@ -1,5 +1,12 @@
 # Changelog
 
+## v1.0.3
+
+- Add a test suite (23 tests): classification, grouping order, breaking changes, tag ranges, CLI output, error handling. Coverage 99% (pytest-cov).
+- CI now runs pytest, ruff (lint + format) and mypy on Python 3.10-3.12, in addition to the install smoke test.
+- Fix import order and a deprecated `typing.Iterable` import flagged by ruff; apply ruff formatting.
+- Document the development workflow in the README.
+
 ## v1.0.2
 
 - Restore the complete standard MIT license, including its limitation-of-liability clause.
