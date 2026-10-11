@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.0.4
+
+- CI matrix now also covers windows-latest.
+
+
 ## v1.0.3
 
 - Add a test suite (23 tests): classification, grouping order, breaking changes, tag ranges, CLI output, error handling. Coverage 99% (pytest-cov).
