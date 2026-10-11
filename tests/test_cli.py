@@ -2,8 +2,9 @@
 
 import subprocess
 
+from conftest import commit
+
 from commitcraft.cli import main
-from tests.conftest import commit
 
 
 def test_cli_prints_changelog(repo, capsys):
