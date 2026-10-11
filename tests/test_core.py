@@ -1,7 +1,8 @@
 """Unit tests for commit classification, rendering, and range selection."""
 
+from conftest import commit, git
+
 from commitcraft.core import Commit, classify, generate, git_commits, latest_tag, render
-from tests.conftest import commit, git
 
 
 class TestClassify:
