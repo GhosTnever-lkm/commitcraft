@@ -2,10 +2,10 @@
 
 from __future__ import annotations
 
-from dataclasses import dataclass
 import re
 import subprocess
-from typing import Iterable
+from collections.abc import Iterable
+from dataclasses import dataclass
 
 CONVENTIONAL = re.compile(
     r"^(?P<type>[a-zA-Z][a-zA-Z0-9_-]*)(?:\((?P<scope>[^)]+)\))?(?P<breaking>!)?:\s*(?P<subject>.+)$"
@@ -47,17 +47,30 @@ class Entry:
 def git_commits(repo: str, revision: str) -> list[Commit]:
     """Read commits with NUL-delimited fields to preserve punctuation safely."""
     command = [
-        "git", "-C", repo, "log", "--no-merges", "--reverse",
-        "--format=%h%x00%s%x00%b%x00", revision,
+        "git",
+        "-C",
+        repo,
+        "log",
+        "--no-merges",
+        "--reverse",
+        "--format=%h%x00%s%x00%b%x00",
+        revision,
     ]
-    result = subprocess.run(command, check=False, capture_output=True, text=True, encoding="utf-8", errors="replace")
+    result = subprocess.run(
+        command,
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
+    )
     if result.returncode:
         message = result.stderr.strip() or "git log failed"
         raise RuntimeError(message)
     fields = result.stdout.split("\x00")
     commits = []
     for i in range(0, len(fields) - 2, 3):
-        short_hash, subject, body = fields[i:i + 3]
+        short_hash, subject, body = fields[i : i + 3]
         if short_hash and subject:
             commits.append(Commit(short_hash.strip(), subject.strip(), body.strip()))
     return commits
@@ -67,7 +80,11 @@ def latest_tag(repo: str, to_ref: str) -> str | None:
     """Return the newest reachable tag, or None when this repository has no tags."""
     result = subprocess.run(
         ["git", "-C", repo, "describe", "--tags", "--abbrev=0", to_ref],
-        check=False, capture_output=True, text=True, encoding="utf-8", errors="replace",
+        check=False,
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
+        errors="replace",
     )
     return result.stdout.strip() if result.returncode == 0 and result.stdout.strip() else None
 
@@ -81,15 +98,40 @@ def classify(commit: Commit, include_unknown: bool = True) -> Entry | None:
         re.search(r"(?im)^BREAKING CHANGE(?:S)?:\s*\S", commit.body)
     )
     category = "Breaking changes" if breaking else GROUPS.get(kind, kind.replace("-", " ").title())
-    return Entry(category, match.group("scope") or "", match.group("subject").strip(), commit.short_hash, breaking)
+    return Entry(
+        category,
+        match.group("scope") or "",
+        match.group("subject").strip(),
+        commit.short_hash,
+        breaking,
+    )
 
 
 def render(entries: Iterable[Entry], title: str = "Changelog") -> str:
     entries = list(entries)
     if not entries:
         return f"# {title}\n\nNo commits found in this range.\n"
-    priority = ["Breaking changes", "Features", "Fixes", "Performance", "Refactoring", "Documentation", "Build", "CI", "Tests", "Styling", "Reverts", "Other"]
-    categories = sorted({entry.category for entry in entries}, key=lambda name: (priority.index(name) if name in priority else len(priority), name.casefold()))
+    priority = [
+        "Breaking changes",
+        "Features",
+        "Fixes",
+        "Performance",
+        "Refactoring",
+        "Documentation",
+        "Build",
+        "CI",
+        "Tests",
+        "Styling",
+        "Reverts",
+        "Other",
+    ]
+    categories = sorted(
+        {entry.category for entry in entries},
+        key=lambda name: (
+            priority.index(name) if name in priority else len(priority),
+            name.casefold(),
+        ),
+    )
     lines = [f"# {title}", ""]
     for category in categories:
         lines.extend([f"## {category}", ""])
@@ -101,14 +143,25 @@ def render(entries: Iterable[Entry], title: str = "Changelog") -> str:
     return "\n".join(lines).rstrip() + "\n"
 
 
-def generate(repo: str, from_ref: str | None = None, to_ref: str = "HEAD", include_unknown: bool = True, title: str | None = None, all_history: bool = False) -> str:
+def generate(
+    repo: str,
+    from_ref: str | None = None,
+    to_ref: str = "HEAD",
+    include_unknown: bool = True,
+    title: str | None = None,
+    all_history: bool = False,
+) -> str:
     start = from_ref or (None if all_history else latest_tag(repo, to_ref))
     if start:
         revision = f"{start}..{to_ref}"
-        heading = title or (f"Unreleased (since {start})" if from_ref is None else f"Changes since {start}")
+        heading = title or (
+            f"Unreleased (since {start})" if from_ref is None else f"Changes since {start}"
+        )
     else:
         revision = to_ref
         heading = title or ("Unreleased" if not all_history else "Complete history")
     commits = git_commits(repo, revision)
-    entries = [entry for commit in commits if (entry := classify(commit, include_unknown)) is not None]
+    entries = [
+        entry for commit in commits if (entry := classify(commit, include_unknown)) is not None
+    ]
     return render(entries, heading)
