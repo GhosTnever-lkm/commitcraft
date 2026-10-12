@@ -1,40 +1,44 @@
 # CommitCraft
 
-CommitCraft turns Git history into a clean Markdown changelog, grouped by Conventional Commit type. It runs locally, needs only Python 3.10+ and Git, and sends no repository data anywhere.
+CommitCraft turns Git history into a readable Markdown changelog grouped by Conventional Commit type. It runs locally with Python 3.10+ and Git; repository data stays on your machine.
 
 ## Install
 
 ```bash
-python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.3"
+python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.4"
 ```
 
-## Use
+## Quick start
 
-Generate unreleased notes since the most recent Git tag:
+From the repository whose history you want to summarize, run:
 
 ```bash
 commitcraft
 ```
 
-Compare a specific release tag with the current checkout and save the result:
+This writes unreleased notes since the latest reachable tag to the terminal. Review the output, then save it when ready:
 
 ```bash
-commitcraft --from v1.2.0 --to HEAD --output RELEASE_NOTES.md --title "What's new"
+commitcraft --output RELEASE_NOTES.md --title "What's new"
 ```
 
-Use `--all-history` when you intentionally want every commit reachable from the target:
+Compare two known refs in the target repository:
 
 ```bash
-commitcraft --all-history
+commitcraft --repo ../my-project --from v1.2.0 --to v1.3.0 --output RELEASE_NOTES.md
 ```
 
-Run against another repository:
+`--from` and `--to` are Git refs from the repository being inspected. Replace the example tags with refs that actually exist there. The starting ref is excluded; the ending ref is included.
+
+## Include older history
+
+By default, CommitCraft starts after the latest tag reachable from `--to`. To intentionally include every commit reachable from the target ref:
 
 ```bash
-commitcraft --repo ../my-project --from v1.2.0 --to v1.3.0
+commitcraft --all-history --to HEAD
 ```
 
-Use `--conventional-only` to leave out messages that do not match Conventional Commits. By default, those messages are grouped under **Other**, so they are not silently lost. Commit bodies containing `BREAKING CHANGE:` and subjects using `!:` appear under **Breaking changes**.
+To omit commit subjects that do not follow Conventional Commits, add `--conventional-only`. By default, those commits appear under **Other** so they are not silently discarded. Commit bodies containing `BREAKING CHANGE:` and subjects using `!:` appear under **Breaking changes**.
 
 ## Categories
 
@@ -42,15 +46,15 @@ Use `--conventional-only` to leave out messages that do not match Conventional C
 
 ## Privacy and limits
 
-CommitCraft reads local Git history using the installed Git executable. It does not access the network, change repository files unless `--output` is supplied, or infer whether a change is user-facing. Review the generated notes before publishing them.
+CommitCraft reads local Git history using the installed Git executable. It does not access the network or change repository files unless `--output` is supplied. It cannot determine whether a commit is user-facing, so review generated notes before publishing them.
 
 ## Development
 
 ```bash
-python -m pip install -e .[dev]
-pytest                 # 23 tests, 99% coverage
+python -m pip install -e ".[dev]"
+pytest
 ruff check . && ruff format --check .
-mypy commitcraft       # strict mode
+mypy commitcraft
 ```
 
 ## License
