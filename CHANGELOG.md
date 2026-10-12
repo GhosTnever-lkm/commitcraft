@@ -1,5 +1,9 @@
 # Changelog
 
+## Unreleased
+
+- Correct the installation pin to v1.0.4 and add a regression check that keeps it aligned with the CLI version.
+
 ## v1.0.4
 
 - CI matrix now also covers windows-latest.

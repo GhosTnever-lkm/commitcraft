@@ -52,7 +52,7 @@ CommitCraft reads local Git history using the installed Git executable. It does 
 
 ```bash
 python -m pip install -e ".[dev]"
-pytest
+pytest --cov=commitcraft --cov-fail-under=80  # 24 tests
 ruff check . && ruff format --check .
 mypy commitcraft
 ```

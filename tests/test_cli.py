@@ -1,9 +1,11 @@
 """End-to-end tests for the command line interface."""
 
 import subprocess
+from pathlib import Path
 
 from conftest import commit
 
+from commitcraft import __version__
 from commitcraft.cli import main
 
 
@@ -40,7 +42,12 @@ def test_cli_version(capsys):
     with pytest.raises(SystemExit) as exc:
         main(["--version"])
     assert exc.value.code == 0
-    assert "commitcraft" in capsys.readouterr().out
+    assert capsys.readouterr().out == f"commitcraft {__version__}\n"
+
+
+def test_readme_install_pin_matches_cli_version():
+    readme = (Path(__file__).resolve().parents[1] / "README.md").read_text(encoding="utf-8")
+    assert f"commitcraft.git@v{__version__}" in readme
 
 
 def test_console_script_entrypoint(repo):
