@@ -70,6 +70,18 @@ class TestGitIntegration:
         with pytest.raises(RuntimeError):
             git_commits(str(repo), "no-such-ref")
 
+    def test_revision_cannot_inject_git_output_option(self, repo, tmp_path):
+        import pytest
+
+        commit(repo, "feat: keep history read only")
+        output = tmp_path / "unexpected-output.txt"
+        injected_revision = f"--output={output}"
+
+        assert latest_tag(str(repo), injected_revision) is None
+        with pytest.raises(RuntimeError):
+            git_commits(str(repo), injected_revision)
+        assert not output.exists()
+
     def test_latest_tag_none_without_tags(self, repo):
         commit(repo, "feat: one")
         assert latest_tag(str(repo), "HEAD") is None

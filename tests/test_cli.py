@@ -36,6 +36,15 @@ def test_cli_bad_repo_returns_2(tmp_path, capsys):
     assert "commitcraft:" in capsys.readouterr().err
 
 
+def test_cli_revision_cannot_write_to_a_git_option_path(repo, tmp_path, capsys):
+    commit(repo, "feat: keep target repository unchanged")
+    output = tmp_path / "unexpected-output.txt"
+
+    assert main(["--repo", str(repo), f"--to=--output={output}"]) == 2
+    assert not output.exists()
+    assert "commitcraft:" in capsys.readouterr().err
+
+
 def test_cli_version(capsys):
     import pytest
 
