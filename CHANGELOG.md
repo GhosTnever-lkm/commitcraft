@@ -2,7 +2,8 @@
 
 ## Unreleased
 
-- Correct the installation pin to v1.0.4 and add a regression check that keeps it aligned with the CLI version.
+- Reject Git options passed as revision strings so changelog generation cannot write to an unintended path.
+- Correct the installation pin to v1.0.5 and add a regression check that keeps it aligned with the CLI version.
 
 ## v1.0.4
 

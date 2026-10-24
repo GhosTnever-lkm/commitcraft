@@ -5,7 +5,7 @@ CommitCraft turns Git history into a readable Markdown changelog grouped by Conv
 ## Install
 
 ```bash
-python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.4"
+python -m pip install "commitcraft @ git+https://github.com/GhosTnever-lkm/commitcraft.git@v1.0.5"
 ```
 
 ## Quick start
@@ -52,7 +52,7 @@ CommitCraft reads local Git history using the installed Git executable. It does 
 
 ```bash
 python -m pip install -e ".[dev]"
-pytest --cov=commitcraft --cov-fail-under=80  # 24 tests
+pytest --cov=commitcraft --cov-fail-under=80  # 26 tests
 ruff check . && ruff format --check .
 mypy commitcraft
 ```

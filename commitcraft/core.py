@@ -54,6 +54,7 @@ def git_commits(repo: str, revision: str) -> list[Commit]:
         "--no-merges",
         "--reverse",
         "--format=%h%x00%s%x00%b%x00",
+        "--end-of-options",
         revision,
     ]
     result = subprocess.run(
@@ -79,7 +80,7 @@ def git_commits(repo: str, revision: str) -> list[Commit]:
 def latest_tag(repo: str, to_ref: str) -> str | None:
     """Return the newest reachable tag, or None when this repository has no tags."""
     result = subprocess.run(
-        ["git", "-C", repo, "describe", "--tags", "--abbrev=0", to_ref],
+        ["git", "-C", repo, "describe", "--tags", "--abbrev=0", "--end-of-options", to_ref],
         check=False,
         capture_output=True,
         text=True,
